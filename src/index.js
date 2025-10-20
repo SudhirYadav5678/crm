@@ -8,39 +8,47 @@ dotenv.config({ path: "../.env" });
 
 
 const app = express();
-app.use(express.json());
-app.listen(process.env.PORT || 8000, () => {
-    console.log(`Server is running ${process.env.PORT}`);
-});
+
 /**
  * Make mogodb connection
  */
 (async () => {
     try {
         await mongoose.connect(process.env.MOGODB_URI);
-        console.log("Databse connected");
+        console.log("Database connection is established");
+        const user = await User.findOne({ userId: "admin" });
+        console.log("user", user);
 
-        /**
-         * default admin created from begning.
-         */
-        const admin_user = await User.findOne({ userId: "admin" });
-        if (!admin_user) {
-            //creating admin user
+        if (!user) {
             const admin = await User.create({
-                name: "one_admin",
+                name: "oneadmin",
                 userId: "admin",
-                email: "admin@admin.com",
-                userType: ADMIN,
+                email: "admin@gmail.com",
                 password: bcrypt.hashSync("123456", 8),
+                userStatus: "APPROVED",
+                userType: "ADMIN"
             })
-            console.log("admin accounted created", admin);
+            console.log("Admin ", admin);
 
         } else {
-            console.log("Admin exits");
-        }
+            console.log("Admin exit");
 
+        }
     } catch (error) {
-        console.error("Error while connection to server", error);
+        console.log("Error while databse connection: ", error);
         process.exit(1);
     }
-})
+
+})();
+
+/**
+ * auth routes
+ */
+import auth_routes from "./routes/auth.routes.js"
+app.use("/crm/api/v1/", auth_routes);
+
+
+app.use(express.json());
+app.listen(process.env.PORT || 8000, () => {
+    console.log(`Server is running ${process.env.PORT}`);
+});
