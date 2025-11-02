@@ -8,7 +8,7 @@ dotenv.config({ path: "../.env" });
 
 
 const app = express();
-
+app.use(express.json());
 /**
  * Make mogodb connection
  */
@@ -17,7 +17,7 @@ const app = express();
         await mongoose.connect(process.env.MOGODB_URI);
         console.log("Database connection is established");
         const user = await User.findOne({ userId: "admin" });
-        console.log("user", user);
+        //console.log("user", user);
 
         if (!user) {
             const admin = await User.create({
@@ -28,7 +28,7 @@ const app = express();
                 userStatus: "APPROVED",
                 userType: "ADMIN"
             })
-            console.log("Admin ", admin);
+            //console.log("Admin ", admin);
 
         } else {
             console.log("Admin exit");
@@ -48,7 +48,7 @@ import auth_routes from "./routes/auth.routes.js"
 app.use("/crm/api/v1/", auth_routes);
 
 
-app.use(express.json());
+
 app.listen(process.env.PORT || 8000, () => {
     console.log(`Server is running ${process.env.PORT}`);
 });

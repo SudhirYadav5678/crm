@@ -4,6 +4,6 @@ import { validateUserReq } from "../middlewares/verfiyUserReq.middleware.js"
 const router = express.Router();
 
 // Define signup route
-router.post("/auth/signup", validateUserReq, signup);
+router.post("/auth/signup", signup);
 
 export default router;
